@@ -1,6 +1,15 @@
 ﻿import { z } from "zod";
 import "dotenv/config";
 
+function pickEnv(...keys: string[]): string | undefined {
+  for (const key of keys) {
+    if (process.env[key] !== undefined) {
+      return process.env[key];
+    }
+  }
+  return undefined;
+}
+
 /**
  * Várias origens separadas por vírgula (útil em dev: localhost + IP na LAN para o celular).
  */
@@ -46,20 +55,31 @@ const schema = z.object({
   JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
 });
 
+const nodeEnv = process.env.NODE_ENV ?? "development";
+const isProduction = nodeEnv === "production";
+const profilePrefix = isProduction ? "PROD" : "DEV";
+
+const profilePortKey = `${profilePrefix}_APP_PORT`;
+const profileDbHostKey = `${profilePrefix}_DB_SERVER`;
+const profileDbPortKey = `${profilePrefix}_DB_PORT`;
+const profileDbUserKey = `${profilePrefix}_DB_USER`;
+const profileDbPasswordKey = `${profilePrefix}_DB_PASSWORD`;
+const profileDbNameKey = `${profilePrefix}_DB_DATABASE`;
+
 const parsed = schema.parse({
-  NODE_ENV: process.env.NODE_ENV,
-  PORT: process.env.PORT,
-  DB_HOST: process.env.DB_HOST,
-  DB_PORT: process.env.DB_PORT,
-  DB_USER: process.env.DB_USER,
-  DB_PASSWORD: process.env.DB_PASSWORD,
-  DB_NAME: process.env.DB_NAME,
+  NODE_ENV: nodeEnv,
+  PORT: pickEnv("PORT", profilePortKey),
+  DB_HOST: pickEnv("DB_HOST", profileDbHostKey),
+  DB_PORT: pickEnv("DB_PORT", profileDbPortKey),
+  DB_USER: pickEnv("DB_USER", profileDbUserKey),
+  DB_PASSWORD: pickEnv("DB_PASSWORD", profileDbPasswordKey),
+  DB_NAME: pickEnv("DB_NAME", profileDbNameKey),
   DB_ENCRYPT: process.env.DB_ENCRYPT,
   DB_TRUST_CERT: process.env.DB_TRUST_CERT,
   FRONTEND_URL: process.env.FRONTEND_URL,
-  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
-  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
-  JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN,
+  JWT_ACCESS_SECRET: pickEnv("JWT_ACCESS_SECRET", "JWT_SECRET_KEY"),
+  JWT_REFRESH_SECRET: pickEnv("JWT_REFRESH_SECRET", "JWT_SECRET_KEY"),
+  JWT_ACCESS_EXPIRES_IN: pickEnv("JWT_ACCESS_EXPIRES_IN", "JWT_EXPIRES_IN"),
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN,
 });
 

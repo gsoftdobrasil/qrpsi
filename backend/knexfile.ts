@@ -1,12 +1,31 @@
 ﻿import "dotenv/config";
 import type { Knex } from "knex";
 
+function pickEnv(...keys: string[]): string | undefined {
+  for (const key of keys) {
+    if (process.env[key] !== undefined) {
+      return process.env[key];
+    }
+  }
+  return undefined;
+}
+
+const nodeEnv = process.env.NODE_ENV ?? "development";
+const isProduction = nodeEnv === "production";
+const profilePrefix = isProduction ? "PROD" : "DEV";
+
+const profileDbHostKey = `${profilePrefix}_DB_SERVER`;
+const profileDbPortKey = `${profilePrefix}_DB_PORT`;
+const profileDbUserKey = `${profilePrefix}_DB_USER`;
+const profileDbPasswordKey = `${profilePrefix}_DB_PASSWORD`;
+const profileDbNameKey = `${profilePrefix}_DB_DATABASE`;
+
 const connection = {
-  server: process.env.DB_HOST ?? "localhost",
-  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 1433,
-  user: process.env.DB_USER ?? "",
-  password: process.env.DB_PASSWORD ?? "",
-  database: process.env.DB_NAME ?? "",
+  server: pickEnv("DB_HOST", profileDbHostKey) ?? "localhost",
+  port: Number(pickEnv("DB_PORT", profileDbPortKey) ?? 1433),
+  user: pickEnv("DB_USER", profileDbUserKey) ?? "",
+  password: pickEnv("DB_PASSWORD", profileDbPasswordKey) ?? "",
+  database: pickEnv("DB_NAME", profileDbNameKey) ?? "",
   options: {
     encrypt: process.env.DB_ENCRYPT !== "false",
     trustServerCertificate: process.env.DB_TRUST_CERT === "true",
