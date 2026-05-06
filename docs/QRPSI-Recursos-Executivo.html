@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QRPSI — Resumo executivo (1 página)</title>
+  <style>
+    :root {
+      --accent: #364fc7;
+      --text: #1a1a1a;
+      --muted: #5c5c5c;
+      --line: #dee2e6;
+    }
+    * { box-sizing: border-box; }
+    @page { size: A4; margin: 12mm; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 9.2pt;
+      line-height: 1.35;
+      color: var(--text);
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 10mm 14mm 12mm;
+    }
+    .screen-only {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 6px;
+      padding: 0.5em 0.75em;
+      margin: 0 0 8px;
+      font-size: 8.5pt;
+    }
+    @media print {
+      .screen-only { display: none !important; }
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 3px solid var(--accent);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+    header svg { flex-shrink: 0; }
+    .brand h1 {
+      margin: 0;
+      font-size: 20pt;
+      letter-spacing: -0.03em;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .brand .sub {
+      margin: 4px 0 0;
+      font-size: 9.5pt;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .tag {
+      margin: 0 0 10px;
+      font-size: 11pt;
+      font-weight: 700;
+      color: #212529;
+    }
+    .cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+      margin-bottom: 10px;
+    }
+    @media print {
+      .cols { gap: 10px 14px; }
+    }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #fafafa;
+    }
+    .panel h2 {
+      margin: 0 0 6px;
+      font-size: 9.5pt;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .panel ul {
+      margin: 0;
+      padding-left: 1.1em;
+    }
+    .panel li { margin: 0.2em 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8.3pt;
+      margin-top: 6px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 3px 5px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #e9ecef; font-weight: 600; }
+    .foot {
+      margin-top: 10px;
+      font-size: 8pt;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      padding-top: 8px;
+    }
+    .foot a { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <p class="screen-only">
+    Uma página A4 ao imprimir ou salvar como PDF. Documentação completa: <strong>QRPSI-Recursos-da-Plataforma.pdf</strong>
+  </p>
+
+  <header>
+    <svg width="48" height="48" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#364fc7"/>
+          <stop offset="100%" style="stop-color:#7950f2"/>
+        </linearGradient>
+      </defs>
+      <rect x="4" y="4" width="88" height="88" rx="18" fill="url(#g2)"/>
+      <text x="48" y="62" text-anchor="middle" fill="white" font-family="Segoe UI, system-ui, sans-serif" font-size="34" font-weight="700">Q</text>
+    </svg>
+    <div class="brand">
+      <h1>QRPSI</h1>
+      <p class="sub">Questionários de Riscos Psicossociais · Resumo executivo</p>
+    </div>
+  </header>
+
+  <p class="tag">Plataforma web que substitui o ciclo Google Forms + Excel por dados centralizados, validação no servidor e indicadores padronizados.</p>
+
+  <div class="cols">
+    <div class="panel">
+      <h2>Proposta de valor</h2>
+      <ul>
+        <li><strong>39 perguntas / 5 temas</strong> em catálogo único — comparabilidade entre empresas e ao longo do tempo.</li>
+        <li><strong>Link público por pesquisa</strong> (UUID); respondente sem login; nome opcional.</li>
+        <li><strong>Consolidação automática</strong> no SQL Server — elimina somatórias frágeis em planilha.</li>
+        <li><strong>Alertas ≥ 35%</strong> “Sim” em pergunta, tema e painel global.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h2>Módulos principais</h2>
+      <ul>
+        <li><strong>Admin:</strong> empresas, usuários, pesquisas (status RASCUNHO → ABERTA → ENCERRADA/CANCELADA), dashboard.</li>
+        <li><strong>Público:</strong> formulário Sim/Não com validação total no servidor e transação na gravação.</li>
+        <li><strong>Departamentos:</strong> autocomplete + cadastro automático com nome normalizado.</li>
+        <li><strong>Relatórios:</strong> por pesquisa (pergunta, tema, departamento) + gráficos; <strong>exportação Excel (.xlsx)</strong> com aba Metadados, filtros, % formatado e destaque vermelho para indicadores ≥35%; dashboard institucional.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel" style="background:#fff;">
+    <h2>Forms + Excel × QRPSI</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:18%">Critério</th>
+          <th style="width:36%">Antes</th>
+          <th style="width:46%">Com QRPSI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Consolidação</td>
+          <td>Export/manual; erros em fórmulas</td>
+          <td>Agregações no backend; regras únicas</td>
+        </tr>
+        <tr>
+          <td>Completude</td>
+          <td>Depende do Forms</td>
+          <td>Todas as perguntas obrigatórias validadas na API</td>
+        </tr>
+        <tr>
+          <td>Corte organizacional</td>
+          <td>Planilha difícil de padronizar</td>
+          <td>Departamentos com normalização e relatório</td>
+        </tr>
+        <tr>
+          <td>Stack</td>
+          <td>—</td>
+          <td>Node.js (Express), SQL Server, React (Mantine), API REST + JWT</td>
+        </tr>
+        <tr>
+          <td>Exportação Excel</td>
+          <td>Manual / copiar-colar</td>
+          <td>3 relatórios XLSX (pergunta, tema, departamento) direto na tela da pesquisa</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="foot">
+    Uso interno e comercial · versão 1.2 · 2026 ·
+    Documentação detalhada: <a href="./QRPSI-Recursos-da-Plataforma.html">QRPSI-Recursos-da-Plataforma.html</a>
+    (sumário com links; exportar PDF pelo navegador)
+  </p>
+
+</body>
+</html>

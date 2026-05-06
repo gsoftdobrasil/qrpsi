@@ -1,0 +1,36 @@
+{
+  "name": "qrpsi-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mantine/core": "^7.14.3",
+    "@mantine/dates": "^7.14.3",
+    "@mantine/form": "^7.14.3",
+    "@mantine/hooks": "^7.14.3",
+    "@mantine/notifications": "^7.14.3",
+    "@tabler/icons-react": "^3.24.0",
+    "axios": "^1.7.9",
+    "dayjs": "^1.11.13",
+    "exceljs": "^4.4.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.1",
+    "recharts": "^2.15.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "postcss": "^8.4.49",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1",
+    "typescript": "~5.6.3",
+    "vite": "^6.0.6"
+  }
+}

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QRPSI — Recursos da plataforma</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --border: #ccc;
+      --accent: #364fc7;
+      --accent-dark: #2b3db0;
+      --bg-soft: #f8f9fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 11pt;
+      line-height: 1.45;
+      color: var(--text);
+      max-width: 210mm;
+      margin: 0 auto;
+      padding: 0 16mm 20mm;
+    }
+    .screen-only {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 6px;
+      padding: 0.65em 1em;
+      margin: 12px 0 1.25em;
+      font-size: 10pt;
+    }
+    @media print {
+      .screen-only { display: none !important; }
+    }
+
+    /* —— Capa —— */
+    .cover-page {
+      min-height: 268mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20mm 12mm;
+      page-break-after: always;
+      break-after: page;
+    }
+    .cover-logo {
+      width: 88px;
+      height: 88px;
+      margin-bottom: 1.25rem;
+    }
+    .cover-brand {
+      font-size: 36pt;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--accent);
+      margin: 0;
+      line-height: 1.1;
+    }
+    .cover-tagline {
+      font-size: 13pt;
+      color: var(--muted);
+      margin: 0.35em 0 1.75em;
+      font-weight: 500;
+    }
+    .cover-doc-title {
+      font-size: 18pt;
+      font-weight: 700;
+      color: #212529;
+      margin: 0 0 0.5em;
+      max-width: 16cm;
+      line-height: 1.25;
+    }
+    .cover-doc-sub {
+      font-size: 11pt;
+      color: var(--muted);
+      margin: 0 0 2em;
+      max-width: 15cm;
+    }
+    .cover-meta-line {
+      font-size: 10pt;
+      color: #868e96;
+      margin: 0.25em 0;
+    }
+    .cover-rule {
+      width: 48mm;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #9775fa);
+      border: none;
+      margin: 1.5em auto;
+      border-radius: 2px;
+    }
+
+    /* —— Sumário —— */
+    .toc {
+      page-break-after: always;
+      break-after: page;
+      padding-top: 0.5em;
+    }
+    .toc h2 {
+      margin-top: 0;
+      font-size: 16pt;
+      color: var(--accent-dark);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.35em;
+    }
+    .toc ol {
+      margin: 0.75em 0 0;
+      padding-left: 1.5em;
+      line-height: 1.7;
+    }
+    .toc a {
+      color: var(--accent-dark);
+      text-decoration: none;
+    }
+    .toc a:hover {
+      text-decoration: underline;
+    }
+    .toc .toc-sub {
+      list-style: none;
+      padding-left: 1.25em;
+      margin: 0.35em 0 0.65em;
+      font-size: 10pt;
+      color: var(--muted);
+    }
+    .toc .toc-sub li {
+      margin: 0.2em 0;
+    }
+    .toc .toc-sub a {
+      color: #495057;
+    }
+
+    h1.doc-heading {
+      font-size: 22pt;
+      font-weight: 700;
+      margin: 0 0 0.35em;
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.25em;
+    }
+    .subtitle {
+      font-size: 12pt;
+      color: var(--muted);
+      margin: 0 0 1.5em;
+    }
+    h2 {
+      font-size: 14pt;
+      margin: 1.4em 0 0.5em;
+      color: #212529;
+      page-break-after: avoid;
+      scroll-margin-top: 1em;
+    }
+    h3 {
+      font-size: 12pt;
+      margin: 1.1em 0 0.4em;
+      color: #343a40;
+      page-break-after: avoid;
+      scroll-margin-top: 1em;
+    }
+    p, li { margin: 0.45em 0; }
+    ul { padding-left: 1.25em; }
+    .lead {
+      font-size: 11.5pt;
+      color: var(--text);
+    }
+    .muted { color: var(--muted); font-size: 10.5pt; }
+    .box {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.85em 1em;
+      margin: 1em 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10pt;
+      margin: 0.75em 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.45em 0.55em;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #e9ecef; font-weight: 600; }
+    hr.sep {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2em 0;
+    }
+    @media print {
+      body { padding: 0 12mm 16mm; }
+      h2 { page-break-before: auto; }
+      .page-break { page-break-before: always; break-before: page; }
+      a[href^="http"]::after { content: ""; }
+      /* Mantém links internos clicáveis no PDF (Chromium) */
+      a[href^="#"] { color: inherit; text-decoration: none; }
+    }
+    @page {
+      size: A4;
+      margin: 14mm;
+    }
+  </style>
+</head>
+<body>
+
+  <p class="screen-only">
+    <strong>PDF:</strong> para gerar novamente, use o navegador → <em>Imprimir</em> → <em>Salvar como PDF</em>.
+    Neste arquivo, o <strong>sumário</strong> possui links para as seções (no PDF exportado continuam clicáveis no leitor).
+  </p>
+
+  <!-- —— Capa —— -->
+  <section class="cover-page" aria-label="Capa">
+    <svg class="cover-logo" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#364fc7"/>
+          <stop offset="100%" style="stop-color:#7950f2"/>
+        </linearGradient>
+      </defs>
+      <rect x="4" y="4" width="88" height="88" rx="18" fill="url(#g)"/>
+      <text x="48" y="64" text-anchor="middle" fill="white" font-family="Segoe UI, system-ui, sans-serif" font-size="40" font-weight="700">Q</text>
+    </svg>
+    <h1 class="cover-brand">QRPSI</h1>
+    <p class="cover-tagline">Questionários de Riscos Psicossociais</p>
+    <hr class="cover-rule" />
+    <h2 class="cover-doc-title">Recursos da plataforma <br> Escopo funcional</h2>
+    <p class="cover-doc-sub">
+      Projeto de evolução frente ao processo anterior (Google Forms + Excel).
+    </p>
+    <p class="cover-meta-line">Versão do documento · 1.2 · 2026</p>
+    <p class="cover-meta-line">Material de apoio · QRPSI</p>
+  </section>
+
+  <!-- —— Sumário (âncoras: exportação PDF com links clicáveis no Chrome/Edge) —— -->
+  <nav class="toc" id="sumario" aria-label="Sumário">
+    <h2>Sumário</h2>
+    <ol>
+      <li><a href="#sec-1">Apresentação</a></li>
+      <li><a href="#sec-2">Limitações do processo anterior (Forms + Excel)</a></li>
+      <li><a href="#sec-3">Visão geral da solução</a></li>
+      <li>
+        <a href="#sec-4">Módulos e o que cada um faz</a>
+        <ul class="toc-sub">
+          <li><a href="#sec-4-1">4.1 Autenticação e sessão</a></li>
+          <li><a href="#sec-4-2">4.2 Empresas</a></li>
+          <li><a href="#sec-4-3">4.3 Usuários</a></li>
+          <li><a href="#sec-4-4">4.4 Pesquisas / links</a></li>
+          <li><a href="#sec-4-5">4.5 Catálogo de perguntas</a></li>
+          <li><a href="#sec-4-6">4.6 Departamentos</a></li>
+          <li><a href="#sec-4-7">4.7 Formulário público</a></li>
+          <li><a href="#sec-4-8">4.8 Análises por pesquisa</a></li>
+          <li><a href="#sec-4-9">4.9 Dashboard</a></li>
+          <li><a href="#sec-4-10">4.10 API REST</a></li>
+        </ul>
+      </li>
+      <li><a href="#sec-5">Benefícios (resumo executivo)</a></li>
+      <li><a href="#sec-6">Observações finais</a></li>
+    </ol>
+    <p class="muted" style="margin-top:1.25em;font-size:10pt;">
+      Versão resumida em uma página: <strong>QRPSI-Recursos-Executivo.html</strong> (na mesma pasta <code>docs</code>).
+    </p>
+  </nav>
+
+  <h1 class="doc-heading" id="titulo-corpo" style="font-size:18pt;margin-top:0;">Conteúdo</h1>
+  <p class="subtitle" style="margin-top:-0.5em;">Corpo do documento · referência detalhada</p>
+
+  <h2 id="sec-1">1. Apresentação</h2>
+  <p class="lead">
+    O <strong>QRPSI</strong> é uma plataforma web para aplicação de questionários de <strong>riscos psicossociais</strong> no trabalho, com foco em governança dos dados, consistência das respostas e análises consolidadas — sem depender de cópias manuais em planilhas nem de somatórias frágeis em Excel.
+  </p>
+  <p>
+    Este documento descreve os <strong>módulos</strong>, os <strong>fluxos</strong> (administrativo e público) e os <strong>indicadores</strong> disponíveis hoje no sistema, servindo como material de apresentação comercial, técnica ou para licitações e relatórios de evolução em relação ao processo anterior (Google Forms + Excel).
+  </p>
+
+  <h2 id="sec-2">2. Limitações do processo anterior (Forms + Excel)</h2>
+  <p>O modelo tradicional com formulários genéricos e planilha de consolidação costuma apresentar:</p>
+  <ul>
+    <li><strong>Fragmentação:</strong> respostas espalhadas por abas, arquivos ou versões de planilha difíceis de auditar.</li>
+    <li><strong>Somatórias e fórmulas manuais:</strong> risco elevado de erro humano ao copiar dados, arrastar fórmulas ou alterar estrutura de colunas.</li>
+    <li><strong>Pouca padronização:</strong> cada aplicador pode interpretar “Sim/Não” ou escala de forma diferente na planilha.</li>
+    <li><strong>Consolidação lenta por recorte:</strong> filtrar por empresa, departamento ou bloco temático exige trabalho repetido em cada ciclo.</li>
+    <li><strong>Governança limitada:</strong> controle de quem acessa dados sensíveis e histórico de alterações é difícil de manter só com arquivos compartilhados.</li>
+    <li><strong>Escalabilidade:</strong> muitas respostas e muitas perguntas tornam a planilha pesada e propensa a inconsistências.</li>
+  </ul>
+  <p>
+    O QRPSI endereça esses pontos ao <strong>centralizar o catálogo de perguntas</strong>, <strong>gravar cada resposta de forma estruturada no banco</strong> e <strong>calcular indicadores no servidor</strong>, com a mesma regra para todas as empresas e pesquisas.
+  </p>
+
+  <div class="page-break"></div>
+
+  <h2 id="sec-3">3. Visão geral da solução</h2>
+  <p>A plataforma é organizada em duas grandes frentes:</p>
+  <ul>
+    <li><strong>Área administrativa (com login):</strong> cadastro de empresas e usuários, criação e gestão de pesquisas, cópia de links públicos, painel consolidado e relatórios analíticos por pesquisa.</li>
+    <li><strong>Formulário público (sem login):</strong> link exclusivo por pesquisa (identificador UUID), acessível ao colaborador, com validação de preenchimento completo e registro auditável da submissão.</li>
+  </ul>
+  <p class="muted">
+    Stack de referência do projeto: API REST em Node.js (Express), banco Microsoft SQL Server, front-end em React (Mantine). O catálogo oficial conta com <strong>39 perguntas</strong> em <strong>5 temas</strong>.
+  </p>
+
+  <h2 id="sec-4">4. Módulos e o que cada um faz</h2>
+
+  <h3 id="sec-4-1">4.1 Autenticação e sessão administrativa</h3>
+  <ul>
+    <li><strong>Login</strong> com e-mail ou nome de usuário e senha (área restrita).</li>
+    <li><strong>Tokens de acesso e refresh</strong> para sessão segura; endpoint de <strong>logout</strong> invalida sessão no servidor.</li>
+    <li><strong>Perfil “/me”</strong> para identificação do usuário logado na interface.</li>
+    <li>Comunicação com a API usando <strong>cookies/credenciais</strong> conforme configuração de CORS e front-end.</li>
+  </ul>
+
+  <h3 id="sec-4-2">4.2 Empresas</h3>
+  <ul>
+    <li><strong>Cadastro e manutenção</strong> de empresas (nome, CNPJ opcional).</li>
+    <li><strong>Listagem com busca</strong> por texto para localizar clientes rapidamente.</li>
+    <li><strong>Exclusão lógica ou remoção</strong> conforme regra de negócio (empresas ativas são consideradas em vínculos com pesquisas e departamentos).</li>
+    <li>Cada empresa possui <strong>departamentos</strong> associados (vide item 4.6).</li>
+  </ul>
+
+  <h3 id="sec-4-3">4.3 Usuários administrativos</h3>
+  <ul>
+    <li><strong>Listagem</strong> dos usuários com permissão de acesso ao painel.</li>
+    <li><strong>Criação de novos usuários</strong> (nome, e-mail, senha) para operação multiusuário da plataforma.</li>
+  </ul>
+
+  <h3 id="sec-4-4">4.4 Pesquisas (“Links / Pesquisas”)</h3>
+  <ul>
+    <li><strong>Criação de pesquisa</strong> vinculada a uma empresa, com título, data da pesquisa e <strong>status</strong> inicial.</li>
+    <li>Geração automática de <strong>link público único</strong> por pesquisa (UUID), utilizado pelos colaboradores.</li>
+    <li><strong>Listagem</strong> de todas as pesquisas com empresa, data, status e <strong>quantidade de respondentes</strong> já coletados.</li>
+    <li><strong>Atualização</strong> de dados cadastrais da pesquisa e alteração de <strong>status do ciclo de vida</strong>:
+      <ul>
+        <li><strong>RASCUNHO</strong> — ainda não disponível para respostas públicas na interface do respondente.</li>
+        <li><strong>ABERTA</strong> — aceita novas respostas via link público.</li>
+        <li><strong>ENCERRADA</strong> / <strong>CANCELADA</strong> — não recebe novas submissões; mensagens adequadas no formulário público.</li>
+      </ul>
+    </li>
+    <li>Na tela de detalhe: <strong>cópia rápida do link público</strong> para envio por e-mail, intranet ou QR Code externo.</li>
+  </ul>
+
+  <h3 id="sec-4-5">4.5 Catálogo de temas e perguntas (núcleo metodológico)</h3>
+  <ul>
+    <li>O sistema mantém um <strong>catálogo central</strong> de <strong>5 temas</strong> e <strong>39 perguntas ativas</strong>, alinhado ao instrumento de riscos psicossociais adotado pelo projeto.</li>
+    <li>Temas seed (ordem de aplicação): Organização do Trabalho; Fatores sociais no trabalho; Ambiente de trabalho; Fatores pessoais e equilíbrio vida-trabalho; Cultura e gestão organizacional.</li>
+    <li>Todas as pesquisas reutilizam o <strong>mesmo conjunto de perguntas</strong>, garantindo comparabilidade entre empresas e ao longo do tempo — sem recriar formulários manualmente a cada ciclo.</li>
+    <li>O código prevê evolução para <strong>cálculos formais (ex.: IRGP com pesos oficiais por pergunta/tema)</strong>, mantendo o desenho preparado para requisitos regulatórios.</li>
+  </ul>
+
+  <h3 id="sec-4-6">4.6 Departamentos e recorte organizacional</h3>
+  <ul>
+    <li>Cada empresa pode ter <strong>departamentos cadastrados</strong>.</li>
+    <li>No formulário público, o colaborador informa <strong>departamento opcional</strong> (com sugestão/autocomplete a partir dos cadastros da empresa).</li>
+    <li>Se o texto informado <strong>não existir</strong>, o sistema pode <strong>criar o departamento automaticamente</strong>, com <strong>nome normalizado</strong> para evitar duplicatas por variação de maiúsculas ou espaços.</li>
+    <li>Isso permite análises posteriores por <strong>unidade organizacional</strong> sem planilha paralela de “limpeza” de nomes.</li>
+  </ul>
+
+  <h3 id="sec-4-7">4.7 Formulário público (respondente)</h3>
+  <ul>
+    <li>Acesso apenas com o <strong>link da pesquisa</strong>, sem necessidade de conta.</li>
+    <li>Exibe título, empresa, data e blocos de perguntas agrupadas por <strong>tema</strong>.</li>
+    <li>Cada pergunta é respondida em <strong>Sim / Não</strong> (booleano persistido de forma consistente).</li>
+    <li><strong>Nome do respondente é opcional</strong>, preservando anonimato quando desejado; há aviso de confidencialidade na tela.</li>
+    <li><strong>Validação no servidor:</strong> só é aceita submissão se a pesquisa estiver <strong>ABERTA</strong> e se o conjunto de respostas cobrir <strong>todas as perguntas ativas</strong> do catálogo (sem respostas faltantes ou IDs inválidos).</li>
+    <li>Gravação em <strong>transação</strong>: cabeçalho da resposta (pesquisa, departamento resolvido, nome opcional, data/hora) + detalhamento por pergunta.</li>
+    <li>Suporte a <strong>tema claro/escuro</strong> na experiência do respondente (acessibilidade e conforto visual).</li>
+  </ul>
+
+  <div class="page-break"></div>
+
+  <h3 id="sec-4-8">4.8 Análises por pesquisa (tela de detalhe)</h3>
+  <p>Para cada pesquisa, a plataforma consolida automaticamente:</p>
+  <ul>
+    <li><strong>Resumo geral:</strong> número de respondentes, totais de respostas “Sim” e “Não”, percentual global de “Sim” (indicativo de exposição ao fator, conforme interpretação metodológica adotada).</li>
+    <li><strong>Gráfico Sim × Não</strong> (pizza) e <strong>gráfico de % Sim por tema</strong> (barras horizontais), com destaque visual quando o tema ultrapassa o limiar de alerta.</li>
+    <li><strong>Tabela “Por pergunta”:</strong> tema, número, texto, contagens, % Sim e <strong>alerta de alto risco</strong> quando o percentual de “Sim” naquela pergunta é ≥ <strong>35%</strong>.</li>
+    <li><strong>Tabela “Por tema”:</strong> agregação por bloco temático com o mesmo critério de alerta (≥ 35% “Sim”).</li>
+    <li><strong>Tabela e gráfico “Por departamento”:</strong> respondentes por departamento, Sim/Não e % Sim — comparação de recortes internos da empresa.</li>
+  </ul>
+  <p><strong>Exportação para Excel (formato XLSX)</strong> na mesma tela: três ações independentes (“Exportar Excel”) alinhadas a cada grid — dados <strong>por pergunta</strong>, <strong>por tema</strong> e <strong>por departamento</strong>. Características do arquivo gerado no navegador:</p>
+  <ul>
+    <li><strong>Nome do arquivo</strong> derivado do título da pesquisa + sufixo (<code>_por_pergunta</code>, <code>_por_tema</code>, <code>_por_departamento</code>).</li>
+    <li><strong>Duas planilhas por arquivo:</strong> a principal contém apenas os dados do recorte exportado (pergunta/tema ou departamento) e há uma aba <strong>Metadados</strong> com identificação da pesquisa, empresa, datas, status, totais consolidados de respondentes/Sim/Não e % Sim geral.</li>
+    <li><strong>Layout de relatório:</strong> linha de cabeçalho com fundo azul (<code>indigo</code> da identidade QRPSI), texto branco centralizado em negrito; <strong>auto-filtro</strong>; <strong>cabeçalho fixo</strong> (freeze na primeira linha); larguras de coluna aproximadas ao conteúdo.</li>
+    <li><strong>Campos percentuais</strong> formatados numericamente como <strong>porcentagem</strong> (<code>0,00%</code> no Excel, conforme região do usuário).</li>
+    <li><strong>Leitura de dados:</strong> linhas zebradas, bordas discretas e linha ao final informando data/hora de exportação (formato local do dispositivo).</li>
+    <li><strong>Destaque de risco no Excel:</strong> células de percentual ≥ <strong>35%</strong> ficam em <strong>vermelho com negrito</strong>; na exportação por pergunta/tema, células de alerta alto risco com valor <strong>“Sim”</strong> também recebem o mesmo destaque; na aba Metadados, o <strong>% Sim geral</strong> segue a mesma regra.</li>
+  </ul>
+
+  <h3 id="sec-4-9">4.9 Dashboard administrativo (visão transversal)</h3>
+  <ul>
+    <li><strong>Cartões de resumo:</strong> empresas ativas, total de pesquisas, pesquisas abertas, volume de respostas coletadas, totais globais de Sim/Não.</li>
+    <li><strong>Gráficos agregados</strong> sobre todo o histórico: distribuição Sim/Não, percentual de Sim por tema (com alerta ≥ 35%), ranking das perguntas com mais respostas “Sim”, pesquisas recentes e empresas com maior volume de respostas.</li>
+    <li>Útil para <strong>acompanhamento institucional</strong> (consultoria, SESMT centralizado ou diretoria) além do detalhe por cliente/pesquisa.</li>
+  </ul>
+
+  <h3 id="sec-4-10">4.10 API REST e integrações futuras</h3>
+  <ul>
+    <li>Endpoints organizados por domínio: <code>/api/auth</code>, <code>/api/public</code> (leitura do formulário e submissão sem login do painel), e rotas protegidas para empresas, pesquisas, dashboard e usuários.</li>
+    <li>Validação de entrada com <strong>schemas</strong> (Zod), respostas JSON padronizadas, tratamento centralizado de erros.</li>
+    <li>Segurança básica de API: <strong>Helmet</strong>, CORS restrito ao front-end configurado, autenticação nas rotas sensíveis.</li>
+  </ul>
+
+  <h2 id="sec-5">5. Benefícios de valor agregado (resumo executivo)</h2>
+  <div class="box">
+    <table>
+      <thead>
+        <tr>
+          <th>Aspecto</th>
+          <th>Forms + Excel</th>
+          <th>QRPSI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Consolidação</td>
+          <td>Manual, planilha por planilha</td>
+          <td>Automática no banco; mesmas regras para todos</td>
+        </tr>
+        <tr>
+          <td>Completude das respostas</td>
+          <td>Depende de configuração do Forms e export</td>
+          <td>Validação server-side: todas as perguntas obrigatórias</td>
+        </tr>
+        <tr>
+          <td>Recorte por departamento</td>
+          <td>Coluna solta, muitas vezes sem padronização</td>
+          <td>Cadastro + normalização; relatório dedicado</td>
+        </tr>
+        <tr>
+          <td>Indicadores e alertas</td>
+          <td>Fórmulas ad hoc; fácil quebrar</td>
+          <td>Cálculo no serviço; limiar configurado (35%)</td>
+        </tr>
+        <tr>
+          <td>Rastreabilidade</td>
+          <td>Arquivo compartilhado</td>
+          <td>Registro com data/hora e vínculo pesquisa/empresa</td>
+        </tr>
+        <tr>
+          <td>Link público</td>
+          <td>URL genérica do Forms</td>
+          <td>UUID por pesquisa; mensagens por status</td>
+        </tr>
+        <tr>
+          <td>Relatórios em planilha</td>
+          <td>Montagem manual a partir de exportações</td>
+          <td>Exportação XLSX por pergunta, tema e departamento, com metadados, formatação e alertas visuais (≥35%)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="sec-6">6. Observações finais</h2>
+  <p>
+    Este documento reflete o escopo funcional implementado no repositório do projeto QRPSI. Já há <strong>exportação para Excel (.xlsx)</strong> nos recortes por pergunta, tema e departamento na tela de detalhe da pesquisa. Evoluções como exportação complementar (<strong>CSV</strong>/<strong>PDF</strong>), geração de relatório no servidor, perfis de permissão mais granulares ou integração com SSO continuam sendo extensões possíveis sem substituir o núcleo aqui descrito.
+  </p>
+  <p class="muted">
+    Documento para apoio comercial e técnico — QRPSI · Riscos psicossociais · v1.2
+  </p>
+
+  <p class="muted screen-only" style="background:transparent;border:none;padding-left:0;">
+    ↑ <a href="#sumario">Voltar ao sumário</a>
+  </p>
+
+</body>
+</html>
