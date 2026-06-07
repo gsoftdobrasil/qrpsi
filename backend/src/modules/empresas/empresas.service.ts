@@ -24,6 +24,7 @@ export async function getById(id: number) {
 
   const pesquisas = await db("Pesquisas as p")
     .where("p.EmpresaId", id)
+    .where("p.Ativo", true)
     .leftJoin(
       "PesquisasRespostas as pr",
       "pr.PesquisaId",

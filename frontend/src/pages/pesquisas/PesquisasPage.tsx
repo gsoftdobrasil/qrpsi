@@ -3,6 +3,7 @@
   Code,
   Group,
   LoadingOverlay,
+  Modal,
   Paper,
   Select,
   Stack,
@@ -14,6 +15,7 @@
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -37,6 +39,10 @@ export function PesquisasPage() {
   const [rows, setRows] = useState<PesquisaRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [gerado, setGerado] = useState<string | null>(null);
+  const [excluirId, setExcluirId] = useState<number | null>(null);
+  const [excluindo, setExcluindo] = useState(false);
+  const [deleteOpened, { open: openDelete, close: closeDelete }] =
+    useDisclosure(false);
 
   const loadAll = async () => {
     setLoading(true);
@@ -76,6 +82,30 @@ export function PesquisasPage() {
 
   const uuidStr = (u: string) =>
     String(u).replace(/[{}]/g, "").toLowerCase();
+
+  const confirmarExclusao = async () => {
+    if (excluirId === null) return;
+    setExcluindo(true);
+    try {
+      await api.delete(`/pesquisas/${excluirId}`);
+      notifications.show({
+        title: "Excluída",
+        message: "Pesquisa excluída.",
+        color: "teal",
+      });
+      closeDelete();
+      setExcluirId(null);
+      void loadAll();
+    } catch {
+      notifications.show({
+        title: "Erro",
+        message: "Não foi possível excluir.",
+        color: "red",
+      });
+    } finally {
+      setExcluindo(false);
+    }
+  };
 
   return (
     <Stack pos="relative">
@@ -192,7 +222,7 @@ export function PesquisasPage() {
               <Table.Th style={{ width: "11%" }}>Data</Table.Th>
               <Table.Th style={{ width: "10%" }}>Status</Table.Th>
               <Table.Th style={{ width: "8%" }}>Respostas</Table.Th>
-              <Table.Th style={{ width: "21%" }}>Ações</Table.Th>
+              <Table.Th style={{ width: "28%" }}>Ações</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -255,6 +285,17 @@ export function PesquisasPage() {
                     >
                       Detalhes
                     </Button>
+                    <Button
+                      size="compact-sm"
+                      variant="light"
+                      color="red"
+                      onClick={() => {
+                        setExcluirId(r.id);
+                        openDelete();
+                      }}
+                    >
+                      Excluir
+                    </Button>
                     {r.status === "ABERTA" && (
                       <Button
                         size="compact-sm"
@@ -290,6 +331,41 @@ export function PesquisasPage() {
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
+
+      <Modal
+        opened={deleteOpened}
+        onClose={() => {
+          closeDelete();
+          setExcluirId(null);
+        }}
+        centered
+        size="xs"
+        withCloseButton={false}
+        padding="lg"
+      >
+        <Stack gap="xs" align="center">
+          <Text ta="center" size="sm">
+            Deseja excluir?
+          </Text>
+          <Text ta="center" size="xs" c="dimmed">
+            Essa operação não poderá ser desfeita!
+          </Text>
+        </Stack>
+        <Group justify="center" mt="md" gap="sm">
+          <Button
+            variant="default"
+            onClick={() => {
+              closeDelete();
+              setExcluirId(null);
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button color="red" loading={excluindo} onClick={() => void confirmarExclusao()}>
+            Excluir
+          </Button>
+        </Group>
+      </Modal>
     </Stack>
   );
 }

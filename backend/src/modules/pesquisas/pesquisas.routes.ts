@@ -88,6 +88,20 @@ pesquisasRouter.get("/:id/resultados-departamentos", async (req, res, next) => {
   }
 });
 
+pesquisasRouter.get("/:id/respostas-completas", async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (Number.isNaN(id)) {
+      res.status(400).json({ error: "ID inválido" });
+      return;
+    }
+    const data = await pesquisasService.respostasCompletas(id);
+    res.json(data);
+  } catch (e) {
+    next(e);
+  }
+});
+
 pesquisasRouter.post("/", async (req, res, next) => {
   try {
     const body = createPesquisaSchema.parse(req.body);
@@ -130,5 +144,19 @@ pesquisasRouter.patch("/:id/status", async (req, res, next) => {
     res.json(data);
   } catch (e) {
     next(e instanceof ZodError ? e : e);
+  }
+});
+
+pesquisasRouter.delete("/:id", async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (Number.isNaN(id)) {
+      res.status(400).json({ error: "ID inválido" });
+      return;
+    }
+    await pesquisasService.remove(id);
+    res.status(204).send();
+  } catch (e) {
+    next(e);
   }
 });

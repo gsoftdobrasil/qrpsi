@@ -7,6 +7,7 @@ export async function getEmpresaIdPorUuid(uuidLink: string): Promise<number | nu
     .join("Empresas as e", "p.EmpresaId", "e.Id")
     .whereRaw("CONVERT(varchar(36), p.UuidLink) = ?", [uuidLink])
     .where("e.Ativo", true)
+    .where("p.Ativo", true)
     .select("p.EmpresaId")
     .first();
 
@@ -18,6 +19,7 @@ export async function getPesquisaPublica(uuidLink: string) {
     .join("Empresas as e", "p.EmpresaId", "e.Id")
     .whereRaw("CONVERT(varchar(36), p.UuidLink) = ?", [uuidLink])
     .where("e.Ativo", true)
+    .where("p.Ativo", true)
     .select(
       "p.Id",
       "p.UuidLink",
@@ -128,6 +130,7 @@ export async function registrarResposta(
     .join("Empresas as e", "p.EmpresaId", "e.Id")
     .whereRaw("CONVERT(varchar(36), p.UuidLink) = ?", [uuidLink])
     .where("e.Ativo", true)
+    .where("p.Ativo", true)
     .select("p.Id", "p.Status", "p.EmpresaId")
     .first();
 

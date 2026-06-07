@@ -9,10 +9,11 @@ export async function resumo() {
     .count<{ c: string | number }>("* as c")
     .first();
   const pesquisasTotal = await db("Pesquisas")
+    .where({ Ativo: true })
     .count<{ c: string | number }>("* as c")
     .first();
   const pesquisasAbertas = await db("Pesquisas")
-    .where({ Status: "ABERTA" })
+    .where({ Status: "ABERTA", Ativo: true })
     .count<{ c: string | number }>("* as c")
     .first();
   const respostasTotal = await db("PesquisasRespostas")
@@ -112,6 +113,7 @@ export async function graficos() {
 
   const recentes = await db("Pesquisas as p")
     .join("Empresas as e", "p.EmpresaId", "e.Id")
+    .where("p.Ativo", true)
     .orderBy("p.CreatedAt", "desc")
     .limit(8)
     .select(
@@ -130,7 +132,7 @@ export async function graficos() {
       e.Nome AS empresaNome,
       COUNT(pr.Id) AS totalRespostas
     FROM Empresas e
-    LEFT JOIN Pesquisas p ON p.EmpresaId = e.Id
+    LEFT JOIN Pesquisas p ON p.EmpresaId = e.Id AND p.Ativo = 1
     LEFT JOIN PesquisasRespostas pr ON pr.PesquisaId = p.Id
     WHERE e.Ativo = 1
     GROUP BY e.Id, e.Nome

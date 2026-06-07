@@ -385,6 +385,188 @@ export function PesquisaDetailPage() {
     URL.revokeObjectURL(url);
   };
 
+  const exportTabelaCompleta = async () => {
+    try {
+      const { data } = await api.get<{
+        empresaNome: string;
+        perguntas: { id: number; ordem: number; texto: string }[];
+        linhas: {
+          dataResposta: string;
+          nomeRespondente: string;
+          departamento: string;
+          respostas: Record<number, "Sim" | "Não" | "">;
+        }[];
+      }>(`/pesquisas/${id}/respostas-completas`);
+
+      if (data.linhas.length === 0) {
+        notifications.show({
+          title: "Sem dados",
+          message: "Não há respostas para exportar.",
+          color: "yellow",
+        });
+        return;
+      }
+
+      const ExcelJS = await import("exceljs");
+      const wb = new ExcelJS.Workbook();
+      const ws = wb.addWorksheet("TabelaCompleta", {
+        views: [{ state: "frozen", ySplit: 1 }],
+      });
+
+      const fixedHeaders = [
+        "Data/Hora",
+        "Empresa",
+        "Nome",
+        "Departamento",
+      ] as const;
+      const questionHeaders = data.perguntas.map((p) => p.texto);
+      const allHeaders = [...fixedHeaders, ...questionHeaders];
+
+      const thinBorder = {
+        top: { style: "thin" as const, color: { argb: "FF000000" } },
+        left: { style: "thin" as const, color: { argb: "FF000000" } },
+        bottom: { style: "thin" as const, color: { argb: "FF000000" } },
+        right: { style: "thin" as const, color: { argb: "FF000000" } },
+      };
+
+      const columnPadding = 4;
+      const columnWidth = (header: string, values: string[]) => {
+        const maxContent = Math.max(
+          header.length,
+          ...values.map((v) => v.length),
+          0
+        );
+        if (header === "Data/Hora") {
+          return 22;
+        }
+        return Math.min(64, Math.max(14, maxContent + columnPadding));
+      };
+
+      const formatDataHora = (raw: string) => {
+        const d = new Date(raw);
+        if (Number.isNaN(d.getTime())) return raw;
+        return d.toLocaleString("pt-BR", {
+          day: "numeric",
+          month: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+      };
+
+      const tableRows: Record<string, string>[] = data.linhas.map((linha) => {
+        const row: Record<string, string> = {
+          "Data/Hora": formatDataHora(String(linha.dataResposta)),
+          Empresa: data.empresaNome,
+          Nome: linha.nomeRespondente,
+          Departamento: linha.departamento,
+        };
+        data.perguntas.forEach((p) => {
+          row[p.texto] = linha.respostas[p.id] ?? "";
+        });
+        return row;
+      });
+
+      allHeaders.forEach((h, idx) => {
+        ws.getColumn(idx + 1).width = columnWidth(
+          h,
+          tableRows.map((r) => r[h] ?? "")
+        );
+      });
+
+      ws.addRow(allHeaders);
+      tableRows.forEach((row) => {
+        ws.addRow(allHeaders.map((h) => row[h] ?? ""));
+      });
+
+      ws.autoFilter = {
+        from: "A1",
+        to: { row: 1, column: allHeaders.length },
+      };
+
+      const headerRow = ws.getRow(1);
+      headerRow.height = 22;
+      headerRow.font = { bold: true, color: { argb: "FFFFFFFF" } };
+      headerRow.alignment = {
+        vertical: "middle",
+        horizontal: "center",
+        wrapText: false,
+      };
+
+      for (let cidx = 1; cidx <= allHeaders.length; cidx += 1) {
+        const cell = headerRow.getCell(cidx);
+        cell.border = thinBorder;
+        if (cidx <= fixedHeaders.length) {
+          cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FF0D9488" },
+          };
+        } else {
+          cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFF59F00" },
+          };
+        }
+      }
+
+      for (let ridx = 2; ridx <= tableRows.length + 1; ridx += 1) {
+        const row = ws.getRow(ridx);
+        row.height = 18;
+        for (let cidx = 1; cidx <= allHeaders.length; cidx += 1) {
+          const cell = row.getCell(cidx);
+          cell.alignment = {
+            vertical: "middle",
+            horizontal: "center",
+            wrapText: false,
+          };
+          cell.border = thinBorder;
+          if (cell.value === "Sim") {
+            cell.font = {
+              bold: true,
+              color: { argb: "FFE03131" },
+            };
+          }
+        }
+      }
+
+      const exportedAt = new Date().toLocaleString("pt-BR");
+      const footerRowIndex = tableRows.length + 3;
+      ws.getCell(footerRowIndex, 1).value = `Exportado em: ${exportedAt}`;
+      ws.getCell(footerRowIndex, 1).font = {
+        italic: true,
+        color: { argb: "FF5C6770" },
+      };
+      if (allHeaders.length > 1) {
+        ws.mergeCells(footerRowIndex, 1, footerRowIndex, allHeaders.length);
+      }
+
+      const base =
+        resumo?.pesquisa?.titulo?.trim().length
+          ? sanitizeFilePart(resumo.pesquisa.titulo)
+          : "pesquisa";
+      const fileName = `${base}_tabela_completa.xlsx`;
+      const buffer = await wb.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = fileName;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      notifications.show({
+        title: "Erro",
+        message: "Não foi possível exportar a tabela completa.",
+        color: "red",
+      });
+    }
+  };
+
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={loading} />
@@ -562,28 +744,38 @@ export function PesquisaDetailPage() {
 
           <Group justify="space-between" align="center" mt="md">
             <Title order={5}>Por pergunta</Title>
-            <Button
-              size="xs"
-              variant="light"
-              onClick={() =>
-                void exportToExcel(
-                  perguntas.map((p) => ({
-                    Tema: p.tema,
-                    Ordem: p.ordem,
-                    Pergunta: p.texto,
-                    Sim: p.totalSim,
-                    Nao: p.totalNao,
-                    TotalRespostas: p.totalRespostas,
-                    PercentualSim: p.percentualSim,
-                    AlertaAltoRisco: p.alertaAltoRisco ? "Sim" : "Não",
-                  })),
-                  "PorPergunta",
-                  "por_pergunta"
-                )
-              }
-            >
-              Exportar Excel
-            </Button>
+            <Group gap="xs">
+              <Button
+                size="xs"
+                variant="light"
+                onClick={() =>
+                  void exportToExcel(
+                    perguntas.map((p) => ({
+                      Tema: p.tema,
+                      Ordem: p.ordem,
+                      Pergunta: p.texto,
+                      Sim: p.totalSim,
+                      Nao: p.totalNao,
+                      TotalRespostas: p.totalRespostas,
+                      PercentualSim: p.percentualSim,
+                      AlertaAltoRisco: p.alertaAltoRisco ? "Sim" : "Não",
+                    })),
+                    "PorPergunta",
+                    "tabela_resumo"
+                  )
+                }
+              >
+                Tabela Resumo
+              </Button>
+              <Button
+                size="xs"
+                variant="light"
+                color="teal"
+                onClick={() => void exportTabelaCompleta()}
+              >
+                Tabela Completa
+              </Button>
+            </Group>
           </Group>
           <Paper withBorder p={0} radius="md" style={{ overflow: "auto" }}>
           <Table striped highlightOnHover withTableBorder>

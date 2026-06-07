@@ -8,6 +8,7 @@ async function ensurePesquisaExists(id: number) {
   const p = await db("Pesquisas as p")
     .join("Empresas as e", "p.EmpresaId", "e.Id")
     .where("p.Id", id)
+    .where("p.Ativo", true)
     .select(
       "p.Id",
       "p.UuidLink",
@@ -72,6 +73,7 @@ export async function aggregateGlobais(pesquisaId: number) {
 export async function list() {
   const rows = await db("Pesquisas as p")
     .join("Empresas as e", "p.EmpresaId", "e.Id")
+    .where("p.Ativo", true)
     .leftJoin(
       "PesquisasRespostas as pr",
       "pr.PesquisaId",
@@ -152,6 +154,7 @@ export async function create(data: {
       Titulo: data.titulo,
       DataPesquisa: data.dataPesquisa,
       Status: data.status,
+      Ativo: true,
       CreatedAt: db.fn.now(),
     })
     .returning(["Id", "UuidLink"]);
@@ -188,9 +191,102 @@ export async function patchStatus(id: number, status: string) {
   return getById(id);
 }
 
+export async function remove(id: number) {
+  const exists = await db("Pesquisas")
+    .where({ Id: id, Ativo: true })
+    .first();
+  if (!exists) {
+    throw new AppError(404, "Pesquisa não encontrada");
+  }
+  await db("Pesquisas").where({ Id: id }).update({
+    Ativo: false,
+    Status: "CANCELADA",
+    UpdatedAt: db.fn.now(),
+  });
+}
+
 export async function getResumo(id: number) {
   const base = await getById(id);
   return base;
+}
+
+export async function respostasCompletas(id: number) {
+  const p = await ensurePesquisaExists(id);
+
+  const perguntas = await db("Perguntas as pg")
+    .join("TemasPerguntas as tp", "pg.TemaId", "tp.Id")
+    .where("pg.Ativo", true)
+    .orderBy(["tp.Ordem", "pg.Ordem"])
+    .select("pg.Id as id", "pg.Ordem as ordem", "pg.Texto as texto");
+
+  const respostasRows = await db("PesquisasRespostas as pr")
+    .leftJoin("Departamentos as d", "d.Id", "pr.DepartamentoId")
+    .where("pr.PesquisaId", id)
+    .orderBy("pr.DataResposta", "asc")
+    .select(
+      "pr.Id as id",
+      "pr.DataResposta as dataResposta",
+      "pr.NomeRespondente as nomeRespondente",
+      db.raw(
+        "COALESCE(d.Nome, pr.DepartamentoInformado, '') as departamento"
+      )
+    );
+
+  const detalhesRows = await db("PesquisasRespostasDetalhes as prd")
+    .join("PesquisasRespostas as pr", "pr.Id", "prd.PesquisaRespostaId")
+    .where("pr.PesquisaId", id)
+    .select(
+      "prd.PesquisaRespostaId as respostaId",
+      "prd.PerguntaId as perguntaId",
+      "prd.Resposta as resposta"
+    );
+
+  const detalhesPorResposta = new Map<number, Map<number, boolean>>();
+  for (const d of detalhesRows as Array<{
+    respostaId: number;
+    perguntaId: number;
+    resposta: boolean | number;
+  }>) {
+    if (!detalhesPorResposta.has(d.respostaId)) {
+      detalhesPorResposta.set(d.respostaId, new Map());
+    }
+    detalhesPorResposta
+      .get(d.respostaId)!
+      .set(d.perguntaId, Boolean(d.resposta));
+  }
+
+  const linhas = (respostasRows as Array<{
+    id: number;
+    dataResposta: Date | string;
+    nomeRespondente: string | null;
+    departamento: string;
+  }>).map((r) => {
+    const respostasMap = detalhesPorResposta.get(r.id) ?? new Map();
+    const respostas: Record<number, "Sim" | "Não" | ""> = {};
+    for (const pg of perguntas as Array<{ id: number }>) {
+      const val = respostasMap.get(pg.id);
+      respostas[pg.id] =
+        val === true ? "Sim" : val === false ? "Não" : "";
+    }
+    return {
+      dataResposta: r.dataResposta,
+      nomeRespondente: r.nomeRespondente ?? "",
+      departamento: r.departamento ?? "",
+      respostas,
+    };
+  });
+
+  return {
+    empresaNome: p.EmpresaNome as string,
+    perguntas: (perguntas as Array<{ id: number; ordem: number; texto: string }>).map(
+      (pg) => ({
+        id: pg.id,
+        ordem: pg.ordem,
+        texto: pg.texto,
+      })
+    ),
+    linhas,
+  };
 }
 
 export async function resultadosPerguntas(id: number) {
